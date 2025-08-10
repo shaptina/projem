@@ -1,0 +1,1 @@
+﻿{"type":"planetary_gearbox","spec":{"stages":[{"ratio":3.2},{"ratio":3.125},{"ratio":10.0}],"overall_ratio":100,"power_kW":10,"materials":{"gear":"42CrMo4","housing":"Al7075"},"outputs":{"torqueNm":1200,"radialN":1000,"axialN":500}}}

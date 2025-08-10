@@ -1,0 +1,39 @@
+# Genel
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+node_modules/
+dist/
+build/
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+
+# Docker
+.env
+*.env.local
+.env.*.local
+
+# Python
+*.pyc
+.python-version
+
+# Next.js
+.next/
+out/
+
+# Alembic
+apps/api/alembic/versions/
+
+# IDE
+.vscode/
+.idea/
+
+

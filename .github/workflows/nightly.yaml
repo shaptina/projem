@@ -1,0 +1,46 @@
+name: Nightly Load/Chaos Tests
+
+on:
+  schedule:
+    - cron: '10 3 * * *'
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+      S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+      S3_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+      S3_REGION: ${{ secrets.S3_REGION }}
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Docker Compose up
+        run: |
+          docker compose up -d --build postgres redis minio minio-setup api worker worker-freecad worker-sim
+          echo "Sağlık bekleniyor..."
+          for i in {1..60}; do curl -fsS http://localhost:8000/api/v1/healthz && break || sleep 2; done
+
+      - name: Run load test (n=10)
+        run: |
+          docker compose exec -T api python -m app.scripts.load_test --n 10 --chain assembly,cam,sim --base-url http://localhost:8000 || true
+          docker cp fc_api:/app/reports ./reports || true
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-reports
+          path: reports
+
+      - name: Print summary
+        run: |
+          if [ -f reports/load_result.md ]; then cat reports/load_result.md; else echo "Raport bulunamadı"; fi
+
+

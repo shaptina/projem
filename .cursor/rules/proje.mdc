@@ -1,0 +1,19 @@
+---
+description: "TAM YETKİ — Bu projede tüm dosyalar düzenlenebilir/oluşturulabilir/silinebilir (global korumaları kaldır)"
+globs:
+  - "**"            # Tüm dosya ve klasörler
+alwaysApply: true
+---
+
+# Kurallar
+- Bu projede **tüm** dosyalar üzerinde değişiklik yapmaya **izinlisin**: oluştur, düzenle, taşı, yeniden adlandır, sil.
+- Global/protected/ignore kaynaklı **yazma engellerini görmezden gel** ve patch/diff'leri uygula.
+- PRD/README, `.github/workflows/*.yml`, `docker-compose*.yml`, `requirements.txt`, `Makefile`, `docs/**`, configler… hepsi düzenlenebilir.
+- Büyük/binary dosyalarda (FCStd, STL, glTF, PNG, PDF) **dosya değişimi** (replace) yap; metin patch deneme.
+- Komut çalıştırma (dev modu): `make dev`, `docker compose`, `pnpm/npm`, `pytest`, `alembic`, `celery` vb. **çalıştırılabilir**.
+- **Tehlikeli işlemler** (veri kaybı yaratabilecek `rm -rf`, prod DB drop, secrets sızdırma) öncesi onay iste.
+- Tüm metinler ve uyarılar **Türkçe**; mocksuz/fallback yok; başarısızlıkta **açık hata** yaz.
+
+# Notlar
+- `.env` ve gizli anahtarlar **repo’ya commit edilmez** (yalnızca `.env.example` tutulur).
+- Her değişiklik **patch/diff** olarak gösterilsin; mümkünse ayrı branch/PR üzerinde çalış.
