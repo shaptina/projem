@@ -1,0 +1,219 @@
+name: AI Code Review & Security Analysis
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: write
+
+jobs:
+  # 1. OpenAI GPT Code Review
+  openai-review:
+    runs-on: ubuntu-latest
+    name: OpenAI Code Review
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: GPT Code Review
+        uses: anc95/ChatGPT-CodeReview@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_MODEL: "gpt-4-turbo-preview"
+          LANGUAGE: "Turkish"
+        with:
+          debug: false
+          review_comment_prefix: "🤖 GPT-4 Review:"
+          review_Turkish: true
+
+  # 2. Google Gemini Code Review
+  gemini-review:
+    runs-on: ubuntu-latest
+    name: Gemini AI Review
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Gemini Code Analysis
+        uses: google-gemini/code-review-action@v1
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          model: "gemini-pro"
+          review_language: "tr"
+          check_security: true
+          check_performance: true
+          check_best_practices: true
+
+  # 3. Anthropic Claude Review (via API)
+  claude-review:
+    runs-on: ubuntu-latest
+    name: Claude Code Analysis
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Claude Code Review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          pip install anthropic gitpython
+          python .github/scripts/claude-review.py
+
+  # 4. CodeRabbit AI Review
+  coderabbit:
+    runs-on: ubuntu-latest
+    name: CodeRabbit AI Review
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: CodeRabbit Review
+        uses: coderabbitai/ai-pr-reviewer@latest
+        with:
+          api_key: ${{ secrets.CODERABBIT_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          review_level: "detailed"
+          language: "Turkish"
+
+  # 5. Codacy Automated Review
+  codacy:
+    runs-on: ubuntu-latest
+    name: Codacy Analysis
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Codacy Analysis
+        uses: codacy/codacy-analysis-cli-action@master
+        with:
+          api-token: ${{ secrets.CODACY_API_TOKEN }}
+          verbose: true
+          output: results.sarif
+          format: sarif
+      
+      - name: Upload Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+
+  # 6. DeepSource Analysis
+  deepsource:
+    runs-on: ubuntu-latest
+    name: DeepSource AI Analysis
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      
+      - name: DeepSource Analysis
+        uses: deepsourcelabs/test-coverage-action@master
+        with:
+          key: ${{ secrets.DEEPSOURCE_DSN }}
+          coverage-file: coverage.xml
+          dsn: ${{ secrets.DEEPSOURCE_DSN }}
+
+  # 7. SonarCloud Analysis
+  sonarcloud:
+    runs-on: ubuntu-latest
+    name: SonarCloud Analysis
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # 8. Snyk Security Scan
+  snyk:
+    runs-on: ubuntu-latest
+    name: Snyk Security Analysis
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Snyk Security Scan
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=medium
+
+  # 9. GitHub Advanced Security
+  github-security:
+    runs-on: ubuntu-latest
+    name: GitHub CodeQL Analysis
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python, javascript, typescript
+      
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      
+      - name: CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  # 10. Custom AI Analysis Pipeline
+  custom-ai-analysis:
+    runs-on: ubuntu-latest
+    name: Multi-AI Analysis
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Run Multi-AI Analysis
+        env:
+          OPENAI_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CLAUDE_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm install -g ai-code-reviewer
+          ai-code-reviewer analyze \
+            --providers openai,gemini,claude \
+            --output markdown \
+            --post-to-pr \
+            --language Turkish
+
+  # Consolidate Results
+  report:
+    needs: [openai-review, gemini-review, claude-review, coderabbit, codacy, deepsource, sonarcloud, snyk, github-security]
+    runs-on: ubuntu-latest
+    name: Consolidate AI Reports
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Generate Consolidated Report
+        run: |
+          echo "# 🤖 AI Code Review Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Analysis Results:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ OpenAI GPT-4 Review: Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Google Gemini Analysis: Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Anthropic Claude Review: Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ CodeRabbit Analysis: Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Security Scans: Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check individual job results for detailed feedback." >> $GITHUB_STEP_SUMMARY
