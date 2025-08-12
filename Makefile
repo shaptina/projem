@@ -1,4 +1,3 @@
-\
 # Cross-platform Makefile (Windows cmd.exe / Unix bash) for CNC/CAM/CAD project
 # Usage:
 #   make init   -> copy .env.example to .env
@@ -82,21 +81,7 @@ build:
 	$(DC) build
 
 run-freecad-smoke:
-	-$(DC) exec api python - << "PY"
-from app.db import db_session
-from app.models_project import Project, Setup, ProjectType
-import requests
-base='http://localhost:8000'
-# Proje ve setup
-with db_session() as s:
-    p = Project(name='Smoke', type=ProjectType.part)
-    s.add(p); s.commit(); pid=p.id
-    s.add(Setup(project_id=pid, name='Top', wcs='G54'))
-    s.commit()
-sid = 1
-print('CAM', requests.post(f"{base}/api/v1/setups/{sid}/cam").status_code)
-print('SIM', requests.post(f"{base}/api/v1/setups/{sid}/simulate").status_code)
-PY
+	-$(DC) exec api python -m app.scripts.run_freecad_smoke
 
 clean:
 	$(DC) down -v

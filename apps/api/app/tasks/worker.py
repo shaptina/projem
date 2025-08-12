@@ -24,6 +24,12 @@ celery_app = Celery(
     ],
 )
 
+# Ek güvence: paket altındaki tüm task modüllerini keşfet
+try:  # pragma: no cover
+    celery_app.autodiscover_tasks(["app.tasks"])  # type: ignore[arg-type]
+except Exception:
+    pass
+
 celery_app.conf.task_queues = {
     "freecad": {},
     "cpu": {},
@@ -41,6 +47,14 @@ celery_app.conf.task_annotations = {
     "app.tasks.assembly.assembly_generate": {"rate_limit": appset.rate_limits.get("assembly", "6/m")},
     "app.tasks.cam.cam_generate": {"rate_limit": appset.rate_limits.get("cam", "12/m")},
     "app.tasks.sim.sim_generate": {"rate_limit": appset.rate_limits.get("sim", "4/m")},
+}
+celery_app.conf.task_routes = {
+    "app.tasks.cad.*": {"queue": "freecad"},
+    "app.tasks.cam_build.*": {"queue": "freecad"},
+    "app.tasks.m18_cam.*": {"queue": "freecad"},
+    "app.tasks.m18_sim.*": {"queue": "sim"},
+    "app.tasks.m18_post.*": {"queue": "postproc"},
+    "app.tasks.reports.*": {"queue": "postproc"},
 }
 celery_app.conf.broker_connection_retry_on_startup = True
 

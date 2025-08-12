@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { createSimJob } from '@/src/lib/jobs'
+import { createSimJob } from '@/lib/jobs'
 
 export default function SimStartModal({ jobId }: { jobId: number }) {
   const [open, setOpen] = useState(false)

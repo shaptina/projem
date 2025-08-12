@@ -29,8 +29,8 @@ coverage/
 .next/
 out/
 
-# Alembic
-apps/api/alembic/versions/
+# Alembic - Keep versions tracked
+# apps/api/alembic/versions/
 
 # IDE
 .vscode/

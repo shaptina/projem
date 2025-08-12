@@ -1,4 +1,4 @@
-import type { Job } from '@/src/hooks/useJobs'
+import type { Job } from '@/hooks/useJobs'
 
 export function JobTable({ items, loading }: { items: Job[]; loading?: boolean }) {
   if (loading) return <div className="animate-pulse text-gray-500">Yükleniyor…</div>

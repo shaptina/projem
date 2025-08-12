@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { api } from '@/src/lib/api'
-import { idem } from '@/src/lib/idempotency'
+import { api } from '@/lib/api'
+import { idem } from '@/lib/idempotency'
 
 const AssemblySchema = z.object({
   type: z.literal('planetary_gearbox'),

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
-import type { JobsParams } from '@/src/hooks/useJobs'
+import type { JobsParams } from '@/hooks/useJobs'
 
 type SavedView = { name: string; params: JobsParams }
 

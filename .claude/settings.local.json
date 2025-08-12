@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo $env:APPDATA)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp:*)",
+      "Bash(gh repo create:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

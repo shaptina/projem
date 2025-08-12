@@ -1,4 +1,4 @@
-import { AssemblyForm } from '@/src/components/forms/AssemblyForm'
+import { AssemblyForm } from '@/components/forms/AssemblyForm'
 
 export default function Page() {
   return (

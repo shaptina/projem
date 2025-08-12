@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { api } from "@/src/lib/api";
-import { idem } from "@/src/lib/idempotency";
+import { api } from "@/lib/api";
+import { idem } from "@/lib/idempotency";
 import { useRouter } from "next/navigation";
 
 export default function NewProjectPage() {

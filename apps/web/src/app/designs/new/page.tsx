@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-import { analyzeDesignPlan, answerDesign } from '@/src/lib/designs'
-import type { DesignBrief } from '@/src/types/designs'
-import { api } from '@/src/lib/api'
-import { idem } from '@/src/lib/idempotency'
+import { analyzeDesignPlan, answerDesign } from '@/lib/designs'
+import type { DesignBrief } from '@/types/designs'
+import { api } from '@/lib/api'
+import { idem } from '@/lib/idempotency'
 import { useRouter } from 'next/navigation'
 
 export default function DesignNewPage() {

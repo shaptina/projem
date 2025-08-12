@@ -1,8 +1,8 @@
 'use client'
-import { useJob } from '@/src/hooks/useJob'
-import CamStartModal from '@/src/components/jobs/CamStartModal'
-import SimStartModal from '@/src/components/jobs/SimStartModal'
-import type { Job, ArtefactRef } from '@/src/types/jobs'
+import { useJob } from '@/hooks/useJob'
+import CamStartModal from '@/components/jobs/CamStartModal'
+import SimStartModal from '@/components/jobs/SimStartModal'
+import type { Job, ArtefactRef } from '@/types/jobs'
 
 export default function JobDetail({ params: { id } }: { params: { id: string } }) {
   const jobId = Number(id)

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import ViewerPage from '@/src/app/viewer/page'
+import ViewerPage from '@/app/viewer/page'
 import { test, expect } from 'vitest'
 
 test('artefakt yoksa bilgilendirme mesajı', async () => {

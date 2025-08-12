@@ -1,0 +1,100 @@
+{
+  "mcpServers": {
+    "project-filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\kafge\\projem"
+      ],
+      "description": "FreeCAD project file system access"
+    },
+    "postgresql-production": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgresql",
+        "postgresql://postgres:password@localhost:5432/projem"
+      ],
+      "description": "Production PostgreSQL database for CAD/CAM data"
+    },
+    "redis-cache": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-redis",
+        "redis://localhost:6379"
+      ],
+      "description": "Redis cache and Celery queue access"
+    },
+    "minio-storage": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-s3",
+        "--endpoint",
+        "http://localhost:9000",
+        "--access-key",
+        "minioadmin",
+        "--secret-key",
+        "minioadmin",
+        "--bucket",
+        "cad-models"
+      ],
+      "description": "MinIO S3 storage for CAD files"
+    },
+    "docker-manager": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-docker"
+      ],
+      "description": "Docker container management"
+    },
+    "github-repo": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github",
+        "--owner",
+        "kafge",
+        "--repo",
+        "projem"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token"
+      },
+      "description": "GitHub repository for version control"
+    },
+    "prometheus-metrics": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-prometheus",
+        "--url",
+        "http://localhost:9090"
+      ],
+      "description": "Prometheus metrics monitoring"
+    },
+    "elasticsearch-logs": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-elasticsearch",
+        "--url",
+        "http://localhost:9200"
+      ],
+      "description": "Elasticsearch for log analysis"
+    },
+    "freecad-python": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\kafge\\projem\\mcp-servers\\freecad_server.py"
+      ],
+      "env": {
+        "FREECAD_PATH": "C:\\Program Files\\FreeCAD\\bin"
+      },
+      "description": "Custom FreeCAD MCP server for CAD operations"
+    }
+  }
+}

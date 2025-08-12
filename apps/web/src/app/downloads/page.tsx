@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { fetchArtifacts } from '@/src/lib/artifacts'
+import { fetchArtifacts } from '@/lib/artifacts'
 
 type ArtefactRow = {
   job_id: number

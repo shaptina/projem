@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { buildJobStats, type JobStats } from '@/src/lib/reports'
+import { buildJobStats, type JobStats } from '@/lib/reports'
 
 export default function ReportsPage() {
   const [stats, setStats] = useState<JobStats | null>(null)

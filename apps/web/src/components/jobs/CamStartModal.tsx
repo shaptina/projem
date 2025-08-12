@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { createCamJob } from '@/src/lib/jobs'
+import { createCamJob } from '@/lib/jobs'
 
 export default function CamStartModal({ jobId }: { jobId: number }) {
   const [open, setOpen] = useState(false)

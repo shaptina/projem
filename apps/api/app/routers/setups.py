@@ -69,12 +69,18 @@ def enqueue_cam(setup_id: int):
     if is_queue_paused("freecad"):
         raise HTTPException(status_code=409, detail="Kuyruk duraklatılmış")
     # V2: doğrudan run (sync) veya Celery cam.generate üzerinden
+    # Prod: Celery'e at. Dev: senkron çalıştırma flag ile kontrol edilir
     try:
-        # Basit: sync çalıştır (demo/dev). Prod: cam.generate job'a çevrilebilir.
-        setup_cam_task_run(setup_id)
+        from ..tasks.cam_build import cam_build_task  # type: ignore
+        cam_build_task.apply_async(args=[setup_id], queue="freecad")
         return {"accepted": True}
     except Exception:
-        raise HTTPException(status_code=503, detail="Kuyruğa alınamadı")
+        # Senkron fallback (yalnız dev/demo)
+        try:
+            setup_cam_task_run(setup_id)
+            return {"accepted": True, "mode": "sync-fallback"}
+        except Exception:
+            raise HTTPException(status_code=503, detail="Kuyruğa alınamadı")
 
 
 @router.post("/{setup_id}/simulate", status_code=202, dependencies=[Depends(require_role(ROLE_OPERATOR_OR_VIEWER))])
@@ -82,7 +88,7 @@ def enqueue_sim(setup_id: int):
     if is_queue_paused("sim"):
         raise HTTPException(status_code=409, detail="Kuyruk duraklatılmış")
     try:
-        setup_sim_task.delay(setup_id)
+        setup_sim_task.apply_async(args=[setup_id], queue="sim")
     except Exception:
         raise HTTPException(status_code=503, detail="Kuyruğa alınamadı")
     return {"accepted": True}
@@ -99,7 +105,7 @@ def enqueue_post(setup_id: int):
         if st.status != "sim_ok":
             raise HTTPException(status_code=409, detail="Sim OK olmadan post yasak")
     try:
-        setup_post_task.delay(setup_id)
+        setup_post_task.apply_async(args=[setup_id], queue="postproc")
     except Exception:
         raise HTTPException(status_code=503, detail="Kuyruğa alınamadı")
     return {"accepted": True}

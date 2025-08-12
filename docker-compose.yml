@@ -107,7 +107,7 @@ services:
       - app-net
     volumes:
       - ./apps/api:/app
-    
+
   worker:
     build:
       context: ./apps/api
@@ -146,12 +146,17 @@ services:
       AWS_S3_ENDPOINT: http://minio:9000
       FREECAD_TIMEOUT_SECONDS: ${FREECAD_TIMEOUT_SECONDS:-1200}
       LANG: C.UTF-8
-    command: ["celery", "-A", "app.tasks.worker", "worker", "--loglevel=INFO", "-Q", "freecad", "-c", "${FREECAD_QUEUE_CONCURRENCY:-1}"]
+    command: ["celery", "-A", "app.tasks.worker", "worker", "--loglevel=INFO", "-Q", "freecad", "-c", "1"]
     healthcheck:
       test: ["CMD", "freecadcmd", "--version"]
       interval: 30s
       timeout: 10s
       retries: 5
+    # securityContext-like: uncomment if daemon allows
+    # read_only: true
+    # security_opt:
+    #   - no-new-privileges:true
+    restart: always
     networks:
       - app-net
 
@@ -173,19 +178,23 @@ services:
       AWS_S3_ENDPOINT: http://minio:9000
       FREECAD_TIMEOUT_SECONDS: ${FREECAD_TIMEOUT_SECONDS:-1200}
       LANG: C.UTF-8
-    command: ["celery", "-A", "app.tasks.worker", "worker", "--loglevel=INFO", "-Q", "sim", "-c", "${SIM_QUEUE_CONCURRENCY:-1}"]
+    command: ["celery", "-A", "app.tasks.worker", "worker", "--loglevel=INFO", "-Q", "sim", "-c", "1"]
     healthcheck:
       test: ["CMD", "freecadcmd", "--version"]
       interval: 30s
       timeout: 10s
       retries: 5
+    # read_only: true
+    # security_opt:
+    #   - no-new-privileges:true
+    restart: always
     networks:
       - app-net
 
   beat:
     build:
       context: ./apps/api
-    dockerfile: Dockerfile
+      dockerfile: Dockerfile
     container_name: fc_beat
     depends_on:
       redis:

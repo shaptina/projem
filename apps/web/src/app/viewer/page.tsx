@@ -1,12 +1,12 @@
 'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
-import { Viewer3D } from '@/src/components/viewer/Viewer3D'
-import { fetchJob, pickArtifact } from '@/src/lib/viewer'
-import { parseGcode } from '@/src/lib/gcode'
-import { getMachineBounds } from '@/src/lib/config'
-import type { Job } from '@/src/types/jobs'
-import { useSimProgress } from '@/src/hooks/useSimProgress'
+import { Viewer3D } from '@/components/viewer/Viewer3D'
+import { fetchJob, pickArtifact } from '@/lib/viewer'
+import { parseGcode } from '@/lib/gcode'
+import { getMachineBounds } from '@/lib/config'
+import type { Job } from '@/types/jobs'
+import { useSimProgress } from '@/hooks/useSimProgress'
 
 export default function ViewerPage() {
   const search = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams()

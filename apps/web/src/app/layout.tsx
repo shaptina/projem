@@ -1,7 +1,7 @@
 import './globals.css'
 import React from 'react'
 import { Providers } from './providers'
-import { Navbar } from '@/src/components/layout/Navbar'
+import { Navbar } from '@/components/layout/Navbar'
 
 export const metadata = {
   title: 'FreeCAD Üretim Platformu',

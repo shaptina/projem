@@ -1,5 +1,5 @@
-import { api } from '@/src/lib/api'
-import type { Job, ArtefactRef } from '@/src/types/jobs'
+import { api } from '@/lib/api'
+import type { Job, ArtefactRef } from '@/types/jobs'
 
 export async function fetchJob(jobId: number): Promise<Job> {
   return api.get<Job>(`/api/v1/jobs/${jobId}`)

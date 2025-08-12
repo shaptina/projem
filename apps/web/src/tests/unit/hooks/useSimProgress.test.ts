@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
-import { useSimProgress } from '@/src/hooks/useSimProgress'
+import { useSimProgress } from '@/hooks/useSimProgress'
 
 class MockEventSource {
   url: string

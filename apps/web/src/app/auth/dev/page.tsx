@@ -1,6 +1,6 @@
 'use client'
 import { useEffect } from 'react'
-import { devLoginOnce } from '@/src/lib/auth'
+import { devLoginOnce } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 
 export default function DevAuthPage() {
