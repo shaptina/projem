@@ -33,9 +33,27 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="p-6">
+    <main>
       <h1 className="text-2xl font-bold">FreeCAD Üretim Platformu</h1>
       <p className="mt-2 text-gray-700">{mesaj}</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        <div className="border rounded p-4">
+          <h3 className="font-semibold">Montaj Oluştur</h3>
+          <p className="text-sm text-gray-600 mt-1">Planet türünde montaj taslağı oluşturun.</p>
+          <a href="/assemblies/new" className="inline-block mt-3 px-3 py-1 bg-indigo-600 text-white rounded">Başla</a>
+        </div>
+        <div className="border rounded p-4">
+          <h3 className="font-semibold">İşler</h3>
+          <p className="text-sm text-gray-600 mt-1">Tüm işlerinizi görüntüleyin ve durumlarını takip edin.</p>
+          <a href="/jobs" className="inline-block mt-3 px-3 py-1 bg-indigo-600 text-white rounded">Git</a>
+        </div>
+        <div className="border rounded p-4">
+          <h3 className="font-semibold">Görüntüleyici</h3>
+          <p className="text-sm text-gray-600 mt-1">Simülasyon mesh ve G-code önizleme.</p>
+          <a href="/viewer" className="inline-block mt-3 px-3 py-1 bg-indigo-600 text-white rounded">Aç</a>
+        </div>
+      </div>
     </main>
   );
 }

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: cnc
+description: FreeCAD tabanlı üretim platformu (Helm chart iskeleti)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+

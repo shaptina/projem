@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cnc.fullname" . }}-worker-freecad
+spec:
+  replicas: {{ .Values.replicaCount.workerFreecad }}
+  selector:
+    matchLabels:
+      app: {{ include "cnc.fullname" . }}-worker-freecad
+  template:
+    metadata:
+      labels:
+        app: {{ include "cnc.fullname" . }}-worker-freecad
+    spec:
+      containers:
+        - name: worker-freecad
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["celery","-A","app.tasks.worker","worker","-Q","freecad","-c","1"]
+          env:
+            {{- range $k, $v := .Values.env }}
+            - name: {{ $k }}
+              value: "{{ $v }}"
+            {{- end }}
+          resources:
+            limits:
+              cpu: {{ .Values.resources.worker.limits.cpu }}
+              memory: {{ .Values.resources.worker.limits.memory }}
+

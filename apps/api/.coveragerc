@@ -1,0 +1,12 @@
+[run]
+omit =
+    app/tasks/*
+    app/scripts/*
+    app/freecad/generate.py
+    app/freecad/path_job.py
+    app/freecad/service.py
+    app/freecad/validate.py
+    app/llm.py
+    app/security/oidc.py
+
+

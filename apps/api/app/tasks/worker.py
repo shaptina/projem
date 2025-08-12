@@ -10,7 +10,18 @@ celery_app = Celery(
     "freecad_tasks",
     broker=settings.redis_url,
     backend=settings.redis_url,
-    include=["app.tasks.assembly", "app.tasks.cam", "app.tasks.sim"],
+    include=[
+        "app.tasks.assembly",
+        "app.tasks.cam",
+        "app.tasks.sim",
+        "app.tasks.design",
+        "app.tasks.cad",
+        "app.tasks.cam_build",
+        "app.tasks.reports",
+        "app.tasks.m18_cam",
+        "app.tasks.m18_sim",
+        "app.tasks.m18_post",
+    ],
 )
 
 celery_app.conf.task_queues = {
@@ -33,4 +44,10 @@ celery_app.conf.task_annotations = {
 }
 celery_app.conf.broker_connection_retry_on_startup = True
 
+
+# API prosesi içinde shared_task çağrılarının doğru broker'a publish edebilmesi için
+try:  # pragma: no cover
+    celery_app.set_default()
+except Exception:
+    pass
 

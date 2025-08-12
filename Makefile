@@ -24,7 +24,7 @@ DC ?= docker compose
 
 .DEFAULT_GOAL := help
 
-.PHONY: help init dev stop logs migrate seed test lint fmt build clean gen-docs
+.PHONY: help init dev stop logs migrate seed test lint fmt build clean gen-docs run-freecad-smoke seed-basics
 
 help:
 	@echo.
@@ -61,6 +61,9 @@ migrate:
 seed:
 	-$(DC) exec api python -m app.scripts.seed
 
+seed-basics:
+	-$(DC) exec api python -m app.scripts.seed_basics
+
 test:
 	-$(DC) exec api pytest -q
 	-$(DC) exec web pnpm test
@@ -77,6 +80,23 @@ fmt:
 
 build:
 	$(DC) build
+
+run-freecad-smoke:
+	-$(DC) exec api python - << "PY"
+from app.db import db_session
+from app.models_project import Project, Setup, ProjectType
+import requests
+base='http://localhost:8000'
+# Proje ve setup
+with db_session() as s:
+    p = Project(name='Smoke', type=ProjectType.part)
+    s.add(p); s.commit(); pid=p.id
+    s.add(Setup(project_id=pid, name='Top', wcs='G54'))
+    s.commit()
+sid = 1
+print('CAM', requests.post(f"{base}/api/v1/setups/{sid}/cam").status_code)
+print('SIM', requests.post(f"{base}/api/v1/setups/{sid}/simulate").status_code)
+PY
 
 clean:
 	$(DC) down -v

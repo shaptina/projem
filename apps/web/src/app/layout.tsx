@@ -1,5 +1,7 @@
-import './globals.css';
-import React from 'react';
+import './globals.css'
+import React from 'react'
+import { Providers } from './providers'
+import { Navbar } from '@/src/components/layout/Navbar'
 
 export const metadata = {
   title: 'FreeCAD Üretim Platformu',
@@ -16,7 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Geliştirici modu aktif: Oturum otomatik sağlanır
           </div>
         )}
-        {children}
+        <Navbar />
+        <Providers>
+          <div className="max-w-6xl mx-auto px-4 py-4">{children}</div>
+        </Providers>
       </body>
     </html>
   );

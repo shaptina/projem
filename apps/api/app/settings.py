@@ -75,6 +75,15 @@ class AppSettings:
         # Güvenlik başlıkları
         self.security_hsts_enabled: bool = _get_bool("SECURITY_HSTS_ENABLED", True)
 
+        # M18 Feature Flags
+        self.m18_multiple_setups_enabled: bool = _get_bool("M18_MULTIPLE_SETUPS_ENABLED", True)
+        self.m18_tool_plane_enabled: bool = _get_bool("M18_TOOL_PLANE_ENABLED", False)
+        self.m18_adaptive_enabled: bool = _get_bool("M18_ADAPTIVE_ENABLED", False)
+        self.m18_holder_clear_mm: int = _get_int("M18_HOLDER_CLEAR_MM", 10)
+        self.m18_max_orientations: int = _get_int("M18_MAX_ORIENTATIONS", 6)
+        self.m18_fast_mode: bool = _get_bool("M18_FAST_MODE", True)
+        self.m18_cam_v2: bool = _get_bool("M18_CAM_V2", False)
+
 
 app_settings = AppSettings()
 

@@ -1,0 +1,7 @@
+[
+  {"name":"EM-6mm-4F","type":"endmill_flat","diameter_mm":6,"flute_count":4,"toolbit_ref":"toolbits/em_6_4f.json"},
+  {"name":"DR-5mm","type":"drill","diameter_mm":5,"flute_count":2,"toolbit_ref":"toolbits/dr_5.json"},
+  {"name":"CH-90-6mm","type":"chamfer","diameter_mm":6,"toolbit_ref":"toolbits/ch_90_6.json"}
+]
+
+

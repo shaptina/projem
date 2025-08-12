@@ -70,8 +70,6 @@ services:
     networks:
       - app-net
 
-  # Duplicate removed; minio-setup is defined above with health dependency
-
   api:
     build:
       context: ./apps/api
@@ -91,6 +89,12 @@ services:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379/0
       AWS_S3_ENDPOINT: http://minio:9000
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      MODEL_POLICY: ${MODEL_POLICY}
+      DEFAULT_MODEL: ${DEFAULT_MODEL}
+      FALLBACK_MODEL: ${FALLBACK_MODEL}
+      MODEL_PLAN: ${MODEL_PLAN}
+      ALLOWED_MODELS: ${ALLOWED_MODELS}
     ports:
       - "${API_PORT:-8000}:8000"
     command: ["/bin/sh", "-c", "./start.sh"]
@@ -103,13 +107,7 @@ services:
       - app-net
     volumes:
       - ./apps/api:/app
-      - ./.env:/app/.env:ro
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 2g
-
+    
   worker:
     build:
       context: ./apps/api
@@ -129,10 +127,11 @@ services:
     command: ["celery", "-A", "app.tasks.worker", "worker", "--loglevel=INFO", "-Q", "cpu,postproc", "-c", "4"]
     networks:
       - app-net
+
   worker-freecad:
     build:
       context: ./apps/api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.freecad
     container_name: fc_worker_freecad
     depends_on:
       api:
@@ -145,21 +144,21 @@ services:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379/0
       AWS_S3_ENDPOINT: http://minio:9000
-      CELERY_WORKER_MAX_MEMORY_PER_CHILD: 800000
-      CELERYD_MAX_TASKS_PER_CHILD: 50
+      FREECAD_TIMEOUT_SECONDS: ${FREECAD_TIMEOUT_SECONDS:-1200}
+      LANG: C.UTF-8
     command: ["celery", "-A", "app.tasks.worker", "worker", "--loglevel=INFO", "-Q", "freecad", "-c", "${FREECAD_QUEUE_CONCURRENCY:-1}"]
+    healthcheck:
+      test: ["CMD", "freecadcmd", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - app-net
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 3g
 
   worker-sim:
     build:
       context: ./apps/api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.freecad
     container_name: fc_worker_sim
     depends_on:
       api:
@@ -172,21 +171,21 @@ services:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379/0
       AWS_S3_ENDPOINT: http://minio:9000
-      CELERY_WORKER_MAX_MEMORY_PER_CHILD: 800000
-      CELERYD_MAX_TASKS_PER_CHILD: 50
-    command: ["sh", "-lc", "celery -A app.tasks.worker worker --loglevel=INFO -Q sim -c ${SIM_QUEUE_CONCURRENCY:-1}"]
+      FREECAD_TIMEOUT_SECONDS: ${FREECAD_TIMEOUT_SECONDS:-1200}
+      LANG: C.UTF-8
+    command: ["celery", "-A", "app.tasks.worker", "worker", "--loglevel=INFO", "-Q", "sim", "-c", "${SIM_QUEUE_CONCURRENCY:-1}"]
+    healthcheck:
+      test: ["CMD", "freecadcmd", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - app-net
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 3g
 
   beat:
     build:
       context: ./apps/api
-      dockerfile: Dockerfile
+    dockerfile: Dockerfile
     container_name: fc_beat
     depends_on:
       redis:
@@ -213,7 +212,7 @@ services:
       - .env
     environment:
       NODE_ENV: development
-      NEXT_PUBLIC_API_BASE_URL: http://api:8000
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
       NEXT_PUBLIC_DEV_AUTH_BYPASS: ${DEV_AUTH_BYPASS}
     ports:
       - "${WEB_PORT:-3000}:3000"
@@ -231,8 +230,8 @@ services:
     volumes:
       - ./compose/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
     ports:
-      - "${OTEL_COLLECTOR_PORT:-4317}:4317" # OTLP gRPC
-      - "${OTEL_COLLECTOR_HTTP_PORT:-4318}:4318" # OTLP HTTP
+      - "${OTEL_COLLECTOR_PORT:-4317}:4317"
+      - "${OTEL_COLLECTOR_HTTP_PORT:-4318}:4318"
     networks:
       - app-net
 

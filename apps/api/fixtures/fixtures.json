@@ -1,0 +1,6 @@
+[
+  {"name":"Vise-125","type":"vise","safety_clear_mm":10,"jaw_open_mm":120,"clamp_height_mm":20},
+  {"name":"Plate-200","type":"plate","safety_clear_mm":8}
+]
+
+

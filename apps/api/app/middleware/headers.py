@@ -28,11 +28,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 class CORSMiddlewareStrict(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         origin = request.headers.get("origin")
-        if origin and appset.cors_allowed_origins and origin not in appset.cors_allowed_origins:
-            return Response(status_code=403, content="İstek kaynağı (Origin) izinli değil.")
+        allowed = (not appset.cors_allowed_origins) or (origin in appset.cors_allowed_origins)
+        if origin and not allowed:
+            resp = Response(status_code=403, content="İstek kaynağı (Origin) izinli değil.")
+            resp.headers["Vary"] = "Origin"
+            return resp
         if request.method == "OPTIONS":
             resp = Response(status_code=204)
-            if origin and (not appset.cors_allowed_origins or origin in appset.cors_allowed_origins):
+            if origin and allowed:
                 resp.headers["Access-Control-Allow-Origin"] = origin
             resp.headers["Vary"] = "Origin"
             resp.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,PATCH,DELETE,OPTIONS"
@@ -41,9 +44,9 @@ class CORSMiddlewareStrict(BaseHTTPMiddleware):
             resp.headers["Access-Control-Max-Age"] = "600"
             return resp
         response: Response = await call_next(request)
-        if origin and (not appset.cors_allowed_origins or origin in appset.cors_allowed_origins):
+        if origin and allowed:
             response.headers["Access-Control-Allow-Origin"] = origin
-            response.headers["Vary"] = "Origin"
+        response.headers["Vary"] = "Origin"
         response.headers["Access-Control-Allow-Credentials"] = "false"
         return response
 

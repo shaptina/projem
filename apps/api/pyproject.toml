@@ -31,7 +31,7 @@ dependencies = [
   "tenacity==8.3.0",
   "prometheus-client==0.20.0",
   "prometheus-fastapi-instrumentator==6.1.0",
-  "mcubes==0.1.0",
+  "PyMCubes==0.1.4",
 ]
 
 [project.optional-dependencies]

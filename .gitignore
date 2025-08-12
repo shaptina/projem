@@ -36,4 +36,15 @@ apps/api/alembic/versions/
 .vscode/
 .idea/
 
+# Ortam dosyaları - GERÇEKLER ignore
+.env
+.env.local
+.env.prod
+.env.production
+
+# ÖRNEK dosyalar - TAKİBE AL
+!.env.example
+!apps/web/.env.local.example
+
+
 

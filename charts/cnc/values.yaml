@@ -1,0 +1,43 @@
+image:
+  repository: ghcr.io/ORG/APP
+  tag: latest
+  pullPolicy: IfNotPresent
+
+env:
+  ENV: production
+  DEV_AUTH_BYPASS: "false"
+  SECURITY_HSTS_ENABLED: "true"
+  DATABASE_URL: "postgresql+psycopg2://user:pass@postgres:5432/db"
+  REDIS_URL: "redis://redis:6379/0"
+  AWS_S3_ENDPOINT: "http://minio:9000"
+  S3_BUCKET_NAME: "artefacts"
+
+resources:
+  api:
+    limits:
+      cpu: 2
+      memory: 2Gi
+  worker:
+    limits:
+      cpu: 2
+      memory: 3Gi
+
+ingress:
+  enabled: false
+  className: nginx
+  hosts:
+    - host: api.example.com
+      paths:
+        - /
+
+replicaCount:
+  api: 1
+  worker: 1
+  workerFreecad: 1
+  workerSim: 1
+
+probes:
+  livenessPath: /api/v1/healthz
+  readinessPath: /api/v1/healthz
+
+

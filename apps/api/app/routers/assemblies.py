@@ -86,7 +86,13 @@ def create_assembly_job(body: AssemblyRequestV1, idempotency_key: str | None = H
         s.add(job)
         s.commit()
         s.refresh(job)
-        assembly_generate.delay(job.id)
+        try:
+            assembly_generate.delay(job.id)
+        except Exception:
+            # kuyruğa gönderilemediyse kaydı geri al
+            s.delete(job)
+            s.commit()
+            raise HTTPException(status_code=503, detail="Kuyruk geçici olarak erişilemiyor. Lütfen tekrar deneyin.")
         return {"job_id": job.id}
 
 

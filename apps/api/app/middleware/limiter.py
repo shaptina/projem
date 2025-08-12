@@ -41,6 +41,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         elif path.startswith("/api/v1/sim/") or path == "/api/v1/sim" or path.startswith("/api/v1/simulate"):
             rule = appset.rate_limit_rules.get("simulate")
             key = "simulate"
+        elif path.startswith("/api/v1/designs"):
+            rule = appset.rate_limit_rules.get("designs") or "30/m"
+            key = "designs"
         else:
             rule = None
         if not rule:
