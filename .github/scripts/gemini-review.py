@@ -16,7 +16,7 @@ class GeminiCodeReviewer:
     def __init__(self):
         # Configure Gemini
         genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-        self.model = genai.GenerativeModel('gemini-pro')
+        self.model = genai.GenerativeModel('models/gemini-2.0-flash')
         self.repo = git.Repo(".")
         self.github_token = os.environ.get("GITHUB_TOKEN")
         self.pr_number = os.environ.get("PR_NUMBER")
