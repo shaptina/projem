@@ -4,9 +4,19 @@
       "Bash(echo $env:APPDATA)",
       "Bash(claude mcp add:*)",
       "Bash(claude mcp:*)",
-      "Bash(gh repo create:*)"
+      "Bash(gh repo create:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(winget install:*)",
+      "Bash(gh auth:*)",
+      "Bash(powershell:*)",
+      "Bash(cmd /c \"C:\\Program Files\\GitHub CLI\\gh.exe\" --version)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "defaultMode": "acceptEdits"
   }
 }
